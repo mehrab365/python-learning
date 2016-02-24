@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 class Post(models.Model):
@@ -16,3 +16,7 @@ class Post(models.Model):
 #     for python 3
 #     def __str__(self):
 #         return self.title
+    def get_absolute_url(self):
+#         return "/posts/details/%s/" %(self.id)
+# dynamic URL
+        return reverse("posts:details",  kwargs={"id":self.id})

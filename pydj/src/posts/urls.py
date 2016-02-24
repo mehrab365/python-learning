@@ -20,7 +20,7 @@ urlpatterns = [
 #     url(r'^delete/$', 'posts.views.post_delete'),
     url(r'^$', post_list),
     url(r'^create/$', post_create),
-    url(r'^details/$', post_details),
+    url(r'^(?P<id>\d+)/$', post_details, name='details'),
     url(r'^update/$', post_update),
     url(r'^delete/$', post_delete),
 ]
