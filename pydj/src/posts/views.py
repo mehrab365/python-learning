@@ -3,15 +3,25 @@ from django.http import HttpResponse
 from .models import Post
 from posts.forms import PostForm
 from django.db.transaction import commit
+from django.http.response import HttpResponseRedirect
+from django.contrib import messages
 # from .forms import PostForm
 
 # Create your views here.
 
 def post_create(request):
+    if request.method == 'POST':
+        print request.POST.get('title')
+        print request.POST.get('content')
+    
     form = PostForm(request.POST or None)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
+        messages.success(request, "Successfully Created")
+        return HttpResponseRedirect(instance.get_absolute_url())
+    else:
+        messages.error(request, "Not Successfully Created")
     context_data = {'form':form}
 #     return HttpResponse("<h1>hello create</h1>")
     return render(request, 'post_forms.html', context_data)
@@ -33,8 +43,20 @@ def post_list(request):
         return render(request, 'index.html', context_data)
 #     return HttpResponse("<h1>hello list</h1>")
 
-def post_update(request):
-    return HttpResponse("<h1>hello update</h1>")
+def post_update(request, id=None):
+    instance = get_object_or_404(Post, id=id)
+    form = PostForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+        messages.success(request, "Successfully Updated")
+        return HttpResponseRedirect(instance.get_absolute_url())
+    else:
+        messages.error(request, "Failed to Update")
+        
+    context_data = {'title':instance.title, 'instance':instance, 'form':form}
+    
+    return render(request, 'post_forms.html', context_data)
 
 def post_delete(request):
     return HttpResponse("<h1>hello delete</h1>")
